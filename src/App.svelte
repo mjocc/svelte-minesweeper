@@ -1,5 +1,7 @@
 <script lang="ts">
+  import Button from './lib/Button.svelte';
   import MSGrid from './lib/MSGrid.svelte';
+  
   let bombFrequency: number = 0.15;
   let bombFrequencySliderValue: number = 0.15;
 </script>
@@ -21,9 +23,9 @@
     />
     <span>{bombFrequencySliderValue}</span>
   </div>
-  <button
+  <Button
     on:click={() => {
       bombFrequency = bombFrequencySliderValue;
-    }}>Update frequency</button
+    }}>Update frequency</Button
   >
 </main>
