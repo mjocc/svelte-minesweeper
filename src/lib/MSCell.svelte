@@ -13,6 +13,8 @@
   let clicked = false;
   let flagged = false;
 
+  const dispatch = createEventDispatcher();
+
   $: numSurroundingBombs = Object.values(surroundings).filter(
     (value) => value
   ).length;
@@ -24,7 +26,8 @@
     )
   ) as MSCellSurroundingLocations[];
 
-  const handleCellClick = () => {
+  const handleCellClick = (event) => {
+    dispatch('cell-click', { location: event.target.dataset.location });
     if (!flagged) {
       clicked = true;
     }
@@ -33,7 +36,6 @@
     flagged = !flagged;
   };
 
-  const dispatch = createEventDispatcher();
   $: {
     if (clicked && numSurroundingBombs === 0) {
       dispatch('reveal-surroundings', { location, surroundingEmptyCells });

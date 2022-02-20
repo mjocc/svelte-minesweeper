@@ -1,18 +1,43 @@
 <script type="ts">
   import type {
+    MSCellClickEvent,
     MSCellLocation,
     MSCellRevealSurroundingsEvent,
     MSCellSurroundingLocations,
     MSCellSurroundings,
+    MSGameOverEvent,
   } from 'src/types/MS.type';
   import { createEventDispatcher } from 'svelte';
   import MSCell from './MSCell.svelte';
 
   export let bombFrequency: number; // number from 0 to 1
 
+  const dispatch = createEventDispatcher();
+
   $: getBombOrEmpty = () => Math.random() < bombFrequency;
   $: getBombLocationsRow = () => Array.from(Array(10), () => getBombOrEmpty());
   $: bombLocations = Array.from(Array(10), () => getBombLocationsRow());
+  $: getNumBombs = () => {
+    let count = 0;
+    for (const bombRow of bombLocations) {
+      for (const bomb of bombRow) {
+        if (bomb) {
+          count += 1;
+        }
+      }
+    }
+    return count;
+  };
+  $: numBombs = getNumBombs();
+
+  let clickedCount = 0;
+  let recordedLocations = [];
+  const recordCellClick = ({ detail: { location } }: MSCellClickEvent) => {
+    if (!recordedLocations.includes(location)) {
+      recordedLocations.push(location);
+      clickedCount += 1;
+    }
+  };
 
   const getRelativeLocation = (
     relativeLocationStr: MSCellSurroundingLocations,
@@ -61,10 +86,20 @@
     }
   };
 
-  const dispatch = createEventDispatcher();
-  const handleGameWin = () => {
-    dispatch('win-game');
+  let gameOver: boolean = false;
+  const handleGameOver = ({ detail }: MSGameOverEvent) => {
+    gameOver = true;
+    dispatch('game-over', detail);
   };
+
+  $: {
+    setTimeout(() => {
+      const squaresLeft = 100 - clickedCount;
+      if (!gameOver && squaresLeft === numBombs) {
+        dispatch('win-game');
+      }
+    }, 10);
+  }
 </script>
 
 <div class="grid grid-cols-10 gap-2 max-w-lg mx-auto my-7">
@@ -74,8 +109,9 @@
         {bomb}
         location={{ row, col }}
         surroundings={getSurroundings({ row, col })}
+        on:cell-click={recordCellClick}
         on:reveal-surroundings={revealSurroundings}
-        on:game-over
+        on:game-over={handleGameOver}
       />
     {/each}
   {/each}

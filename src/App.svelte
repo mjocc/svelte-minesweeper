@@ -12,7 +12,15 @@
 <main>
   <h1 class="font-bold text-6xl text-center mt-10">Minesweeper</h1>
   {#key `${bombFrequency}:${reset}`}
-    <MSGrid {bombFrequency} />
+    <MSGrid
+      {bombFrequency}
+      on:game-over={() => {
+        console.log('game over');
+      }}
+      on:win-game={() => {
+        console.log('game won');
+      }}
+    />
   {/key}
   <div class="flex justify-center items-center my-8">
     <div
