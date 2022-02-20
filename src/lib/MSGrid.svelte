@@ -1,18 +1,17 @@
 <script type="ts">
   import type {
-    MSCellGameOverEvent,
     MSCellLocation,
     MSCellRevealSurroundingsEvent,
     MSCellSurroundingLocations,
     MSCellSurroundings,
   } from 'src/types/MS.type';
+  import { createEventDispatcher } from 'svelte';
   import MSCell from './MSCell.svelte';
 
   export let bombFrequency: number; // number from 0 to 1
 
   $: getBombOrEmpty = () => Math.random() < bombFrequency;
-  $: getBombLocationsRow = () =>
-    Array.from(Array(10), () => getBombOrEmpty());
+  $: getBombLocationsRow = () => Array.from(Array(10), () => getBombOrEmpty());
   $: bombLocations = Array.from(Array(10), () => getBombLocationsRow());
 
   const getRelativeLocation = (
@@ -62,12 +61,13 @@
     }
   };
 
-  const handleGameOver = ({ detail }: MSCellGameOverEvent) => {
-    console.log(`game over at ${detail.row}, ${detail.col}`);
+  const dispatch = createEventDispatcher();
+  const handleGameWin = () => {
+    dispatch('win-game');
   };
 </script>
 
-<div class="grid grid-cols-10 gap-2 max-w-lg mx-auto mt-7">
+<div class="grid grid-cols-10 gap-2 max-w-lg mx-auto my-7">
   {#each bombLocations as bombLocationsRow, row (row)}
     {#each bombLocationsRow as bomb, col (`${row}:${col}`)}
       <MSCell
@@ -75,7 +75,7 @@
         location={{ row, col }}
         surroundings={getSurroundings({ row, col })}
         on:reveal-surroundings={revealSurroundings}
-        on:game-over={handleGameOver}
+        on:game-over
       />
     {/each}
   {/each}

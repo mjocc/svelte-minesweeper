@@ -12,7 +12,8 @@ export type MSCellSurroundings = {
   [key in MSCellSurroundingLocations]?: boolean;
 };
 
-export type MSCellGameOverEvent = CustomEvent<MSCellLocation>;
+export type MSGameOverEvent = CustomEvent<MSCellLocation>;
+export type MSWinEvent = CustomEvent<undefined>;
 export type MSCellRevealSurroundingsEvent = CustomEvent<{
   location: MSCellLocation;
   surroundingEmptyCells: MSCellSurroundingLocations[];
