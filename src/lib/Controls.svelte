@@ -1,5 +1,6 @@
 <script type="ts">
   import Button from './Button.svelte';
+  import OutlineBox from './OutlineBox.svelte';
 
   export let bombFrequency: number;
   export let reset: boolean;
@@ -8,10 +9,8 @@
   $: sliderChanged = bombFrequency !== bombFrequencySliderValue;
 </script>
 
-<div class="flex justify-center items-center my-8">
-  <div
-    class="py-3 px-5 outline outline-gray-500 rounded-xl flex justify-center items-center"
-  >
+<div class="flex justify-center items-center my-6">
+  <OutlineBox extraClasses="py-3 px-5">
     <div class="flex flex-col">
       <div class="flex items-center justify-between">
         <label for="bomb-frequency-slider">Bomb frequency</label>
@@ -42,5 +41,5 @@
         reset = !reset;
       }}>Restart game</Button
     >
-  </div>
+  </OutlineBox>
 </div>

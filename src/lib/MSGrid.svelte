@@ -9,6 +9,7 @@
   } from 'src/types/MS.type';
   import { createEventDispatcher } from 'svelte';
   import MSCell from './MSCell.svelte';
+  import OutlineBox from './OutlineBox.svelte';
 
   export let bombFrequency: number; // number from 0 to 1
   export let disabled: boolean = false;
@@ -102,18 +103,22 @@
   }
 </script>
 
-<div class="grid grid-cols-10 gap-2 max-w-lg mx-auto my-7">
-  {#each bombLocations as bombLocationsRow, row (row)}
-    {#each bombLocationsRow as bomb, col (`${row}:${col}`)}
-      <MSCell
-        {bomb}
-        {disabled}
-        location={{ row, col }}
-        surroundings={getSurroundings({ row, col })}
-        on:cell-click={recordCellClick}
-        on:reveal-surroundings={revealSurroundings}
-        on:game-over={handleGameOver}
-      />
-    {/each}
-  {/each}
+<div class="flex my-7 justify-center items-center">
+  <OutlineBox extraClasses="p-3">
+    <div class="grid grid-cols-10 gap-3">
+      {#each bombLocations as bombLocationsRow, row (row)}
+        {#each bombLocationsRow as bomb, col (`${row}:${col}`)}
+          <MSCell
+            {bomb}
+            {disabled}
+            location={{ row, col }}
+            surroundings={getSurroundings({ row, col })}
+            on:cell-click={recordCellClick}
+            on:reveal-surroundings={revealSurroundings}
+            on:game-over={handleGameOver}
+          />
+        {/each}
+      {/each}
+    </div>
+  </OutlineBox>
 </div>
