@@ -11,6 +11,7 @@ export type MSCellSurroundingLocations =
 export type MSCellSurroundings = {
   [key in MSCellSurroundingLocations]?: boolean;
 };
+export type MSGameState = 'playing' | 'won' | 'lost';
 
 export type MSCellClickEvent = CustomEvent<{ location: string }>;
 export type MSGameOverEvent = CustomEvent<MSCellLocation>;

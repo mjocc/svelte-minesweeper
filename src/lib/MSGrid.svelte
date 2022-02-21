@@ -11,7 +11,7 @@
   import MSCell from './MSCell.svelte';
 
   export let bombFrequency: number; // number from 0 to 1
-
+  export let disabled: boolean = false;
   const dispatch = createEventDispatcher();
 
   $: getBombOrEmpty = () => Math.random() < bombFrequency;
@@ -107,6 +107,7 @@
     {#each bombLocationsRow as bomb, col (`${row}:${col}`)}
       <MSCell
         {bomb}
+        {disabled}
         location={{ row, col }}
         surroundings={getSurroundings({ row, col })}
         on:cell-click={recordCellClick}

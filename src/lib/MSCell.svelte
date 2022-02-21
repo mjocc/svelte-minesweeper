@@ -9,6 +9,8 @@
   export let bomb: boolean;
   export let location: MSCellLocation;
   export let surroundings: MSCellSurroundings;
+  export let disabled: boolean = false;
+  $: locationStr = `${location.row}:${location.col}`;
 
   let clicked = false;
   let flagged = false;
@@ -27,13 +29,15 @@
   ) as MSCellSurroundingLocations[];
 
   const handleCellClick = (event) => {
-    dispatch('cell-click', { location: event.target.dataset.location });
-    if (!flagged) {
+    if (!disabled && !flagged) {
+      dispatch('cell-click', { location: locationStr });
       clicked = true;
     }
   };
   const handleCellRightClick = () => {
-    flagged = !flagged;
+    if (!disabled) {
+      flagged = !flagged;
+    }
   };
 
   $: {
@@ -50,9 +54,11 @@
 
 <div
   data-mscell={true}
-  data-location={`${location.row}:${location.col}`}
+  data-location={locationStr}
   class={`${
-    clicked ? 'bg-gray-200' : 'bg-gray-700 cursor-pointer'
+    clicked
+      ? 'bg-gray-200'
+      : `bg-gray-700 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`
   } h-10 w-10 flex justify-center items-center`}
   on:click={handleCellClick}
   on:contextmenu|preventDefault={handleCellRightClick}
