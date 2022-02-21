@@ -3,13 +3,14 @@
     MSCellLocation,
     MSCellSurroundingLocations,
     MSCellSurroundings,
+    MSGameState,
   } from 'src/types/MS.type';
   import { createEventDispatcher } from 'svelte';
 
   export let bomb: boolean;
   export let location: MSCellLocation;
   export let surroundings: MSCellSurroundings;
-  export let disabled: boolean = false;
+  export let gameState: MSGameState;
   $: locationStr = `${location.row}:${location.col}`;
 
   let clicked = false;
@@ -29,13 +30,13 @@
   ) as MSCellSurroundingLocations[];
 
   const handleCellClick = (event) => {
-    if (!disabled && !flagged) {
+    if (gameState === 'playing' && !flagged) {
       dispatch('cell-click', { location: locationStr });
       clicked = true;
     }
   };
   const handleCellRightClick = () => {
-    if (!disabled) {
+    if (gameState === 'playing') {
       flagged = !flagged;
     }
   };
@@ -58,17 +59,25 @@
   class={`${
     clicked
       ? 'bg-gray-200'
-      : `bg-gray-700 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`
+      : `bg-gray-700 ${
+          gameState === 'playing' ? 'cursor-pointer' : 'cursor-not-allowed'
+        }`
   } h-10 w-10 flex justify-center items-center`}
   on:click={handleCellClick}
   on:contextmenu|preventDefault={handleCellRightClick}
 >
-  {#if clicked}
-    {#if bomb}
-      <span>💣</span>
-    {:else if numSurroundingBombs > 0}
-      <span>{numSurroundingBombs}</span>
+  {#if gameState === 'playing'}
+    {#if clicked}
+      {#if bomb}
+        <span >💣</span>
+      {:else if numSurroundingBombs > 0}
+        <span>{numSurroundingBombs}</span>
+      {/if}
+    {:else if flagged}
+      <span>🚩</span>
     {/if}
+  {:else if bomb}
+    <span class={clicked && 'bg-red-500'}>💣</span>
   {:else if flagged}
     <span>🚩</span>
   {/if}

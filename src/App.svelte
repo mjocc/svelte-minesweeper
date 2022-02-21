@@ -25,13 +25,7 @@
   {#key `${bombFrequency}:${reset}`}
     <MSGrid
       {bombFrequency}
-      disabled={gameState !== 'playing'}
-      on:game-over={() => {
-        gameState = 'lost';
-      }}
-      on:win-game={() => {
-        gameState = 'won';
-      }}
+      bind:gameState
     />
   {/key}
   <Controls bind:bombFrequency bind:reset />

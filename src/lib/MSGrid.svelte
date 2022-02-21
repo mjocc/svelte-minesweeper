@@ -6,13 +6,14 @@
     MSCellSurroundingLocations,
     MSCellSurroundings,
     MSGameOverEvent,
+    MSGameState,
   } from 'src/types/MS.type';
   import { createEventDispatcher } from 'svelte';
   import MSCell from './MSCell.svelte';
   import OutlineBox from './OutlineBox.svelte';
 
   export let bombFrequency: number; // number from 0 to 1
-  export let disabled: boolean = false;
+  export let gameState: MSGameState;
   const dispatch = createEventDispatcher();
 
   $: getBombOrEmpty = () => Math.random() < bombFrequency;
@@ -87,16 +88,16 @@
     }
   };
 
-  let gameOver: boolean = false;
   const handleGameOver = ({ detail }: MSGameOverEvent) => {
-    gameOver = true;
+    gameState = 'lost';
     dispatch('game-over', detail);
   };
 
   $: {
     setTimeout(() => {
       const squaresLeft = 100 - clickedCount;
-      if (!gameOver && squaresLeft === numBombs) {
+      if (gameState !== 'lost' && squaresLeft === numBombs) {
+        gameState = 'won';
         dispatch('win-game');
       }
     }, 10);
@@ -110,7 +111,7 @@
         {#each bombLocationsRow as bomb, col (`${row}:${col}`)}
           <MSCell
             {bomb}
-            {disabled}
+            {gameState}
             location={{ row, col }}
             surroundings={getSurroundings({ row, col })}
             on:cell-click={recordCellClick}
